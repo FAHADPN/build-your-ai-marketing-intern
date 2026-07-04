@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Instructor Notes — Build Your AI Marketing Intern</title>
+<style>
+:root{
+  --blue:#1C6AE8;--navy:#071633;--yellow:#F1FF0B;--ink:#0f1830;--paper:#f6f8fc;--card:#fff;
+  --mut:#5b6b8c;--line:#e4e9f2;--say:#1C6AE8;--do:#0a7d4d;--warn:#c8341f;--warnbg:#fff2ef;
+  --saybg:#eef4ff;--dobg:#eafaf1;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;background:var(--paper);color:var(--ink);
+  line-height:1.5;font-size:17px;padding-bottom:70px;overflow-x:hidden}
+.cmd{overflow-wrap:anywhere}
+h1,h2,h3{line-height:1.15;margin:0}
+a{color:var(--blue)}
+code,kbd{font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace}
+/* sticky header + clock */
+header{position:sticky;top:0;z-index:50;background:var(--navy);color:#fff;padding:10px 14px;box-shadow:0 2px 10px rgba(0,0,0,.25)}
+.htitle{font-size:14px;font-weight:800;letter-spacing:.01em}
+.htitle span{color:var(--yellow)}
+.clockbar{display:flex;align-items:center;gap:10px;margin-top:7px}
+#startBtn{background:var(--yellow);color:var(--navy);border:0;border-radius:8px;font-weight:800;font-size:14px;padding:8px 14px;cursor:pointer}
+#clock{font-variant-numeric:tabular-nums;font-weight:800;font-size:20px;letter-spacing:.02em}
+#nowseg{font-size:12.5px;color:#bcd0f5;font-weight:600;flex:1;min-width:0}
+#nowseg b{color:var(--yellow)}
+.pace{font-weight:800}
+.pace.ok{color:#7CFFA6}.pace.behind{color:#FF8A7A}.pace.ahead{color:#9fd0ff}
+/* jump menu */
+#jumpBtn{background:#12325f;color:#cfe0ff;border:0;border-radius:8px;font-weight:700;font-size:13px;padding:8px 10px;cursor:pointer}
+#toc{display:none;background:#0b2350;border-top:1px solid #1c3d72;padding:6px 4px}
+#toc.open{display:block}
+#toc a{display:block;color:#dce9ff;text-decoration:none;font-size:13.5px;padding:9px 12px;border-radius:8px}
+#toc a:active{background:#12325f}
+#toc a .tt{color:var(--yellow);font-weight:800;font-variant-numeric:tabular-nums;margin-right:8px}
+#toc a.now{background:#12325f}
+/* content */
+main{padding:14px 12px 40px;max-width:760px;margin:0 auto}
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 14px}
+.tag{font-size:12px;font-weight:800;padding:4px 9px;border-radius:999px}
+.tag.say{background:var(--saybg);color:var(--say)}
+.tag.do{background:var(--dobg);color:var(--do)}
+.tag.warn{background:var(--warnbg);color:var(--warn)}
+.tag.time{background:#fff7cc;color:#8a6d00}
+/* segment cards (collapsible) */
+details.seg{background:var(--card);border:1px solid var(--line);border-radius:14px;margin:12px 0;overflow:hidden;box-shadow:0 1px 3px rgba(15,24,48,.05)}
+details.seg[open]{box-shadow:0 6px 20px rgba(28,106,232,.10)}
+summary{list-style:none;cursor:pointer;padding:14px 16px;display:flex;align-items:center;gap:11px}
+summary::-webkit-details-marker{display:none}
+.tbadge{flex:none;background:var(--navy);color:var(--yellow);font-weight:800;font-variant-numeric:tabular-nums;font-size:13px;padding:6px 9px;border-radius:8px;min-width:52px;text-align:center}
+.stitle{font-size:16.5px;font-weight:800;flex:1}
+.stitle .sub{display:block;font-size:12.5px;color:var(--mut);font-weight:600;margin-top:2px}
+.chev{color:var(--mut);font-size:13px;flex:none}
+details[open] .chev{transform:rotate(90deg)}
+.body{padding:2px 16px 18px;border-top:1px solid var(--line)}
+.goal{font-size:13.5px;color:var(--mut);font-style:italic;margin:12px 0}
+.block{margin:13px 0;padding:11px 13px;border-radius:11px;border-left:4px solid}
+.block .lab{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px;display:block}
+.block.say{background:var(--saybg);border-color:var(--say)}
+.block.say .lab{color:var(--say)}
+.block.do{background:var(--dobg);border-color:var(--do)}
+.block.do .lab{color:var(--do)}
+.block.warn{background:var(--warnbg);border-color:var(--warn)}
+.block.warn .lab{color:var(--warn)}
+.block p{margin:6px 0}
+.block ul{margin:6px 0;padding-left:20px}.block li{margin:4px 0}
+.trans{font-size:14px;color:#2a3a5c;font-weight:600;margin:13px 0;padding-left:12px;border-left:3px solid var(--yellow)}
+/* prompt box */
+.prompt{position:relative;background:#0b1a34;color:#eaf1ff;border-radius:10px;margin:9px 0;overflow:hidden}
+.prompt pre{margin:0;padding:13px 14px;padding-right:64px;white-space:pre-wrap;word-break:break-word;font-size:13.5px;line-height:1.5}
+.copy{position:absolute;top:8px;right:8px;background:#1c3d72;color:#cfe0ff;border:0;border-radius:7px;font-size:11.5px;font-weight:700;padding:6px 10px;cursor:pointer}
+.copy.done{background:var(--do);color:#fff}
+.ptip{font-size:11.5px;color:var(--mut);margin:2px 2px 8px}
+/* commands / ops */
+.cmd{background:#0b1a34;color:#eaf1ff;border-radius:8px;padding:10px 12px;font-size:13.5px;margin:7px 0;white-space:pre-wrap;word-break:break-word;position:relative}
+.cmd .c{color:var(--yellow)}
+.opsgrid h3{font-size:15px;color:var(--navy);margin:16px 0 4px;display:flex;align-items:center;gap:8px}
+.pill{font-size:11px;font-weight:800;padding:3px 8px;border-radius:999px;background:#eef4ff;color:var(--blue)}
+.pill.red{background:var(--warnbg);color:var(--warn)}
+.note{font-size:13px;color:var(--mut);margin:5px 0}
+.check{list-style:none;padding:0;margin:8px 0}
+.check li{padding:8px 0 8px 30px;position:relative;border-bottom:1px solid var(--line);font-size:15px}
+.check li:before{content:"☐";position:absolute;left:0;top:7px;font-size:18px;color:var(--blue)}
+table.rec{width:100%;border-collapse:collapse;font-size:13.5px;margin:8px 0}
+table.rec td{border:1px solid var(--line);padding:8px 9px;vertical-align:top}
+table.rec td:first-child{font-weight:700;color:var(--warn);width:42%}
+.sectionhead{font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin:26px 0 6px;padding-top:6px;border-top:2px solid var(--line)}
+.big-offer{background:var(--navy);color:#fff;border-radius:14px;padding:18px;text-align:center;margin:14px 0}
+.big-offer .code{display:inline-block;background:var(--yellow);color:var(--navy);font-weight:900;font-size:20px;padding:8px 18px;border-radius:999px;margin:8px 0}
+.big-offer .contact{font-size:13.5px;color:#cfe0ff;margin-top:8px}
+footer{text-align:center;color:var(--mut);font-size:12px;padding:24px 12px 40px}
+.backtop{position:fixed;right:14px;bottom:14px;z-index:40;background:var(--blue);color:#fff;border:0;width:46px;height:46px;border-radius:50%;font-size:20px;box-shadow:0 6px 18px rgba(28,106,232,.4);cursor:pointer}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="htitle">🎤 Instructor Notes — Build Your <span>AI Marketing Intern</span></div>
+  <div class="clockbar">
+    <button id="startBtn">▶ Start</button>
+    <span id="clock">0:00</span>
+    <span id="nowseg">Press Start when you begin · 3-hour run</span>
+    <button id="jumpBtn">☰ Jump</button>
+  </div>
+  <nav id="toc"></nav>
+</header>
+
+<main>
+  <div class="legend">
+    <span class="tag time">⏱ time</span>
+    <span class="tag say">SAY — talking points</span>
+    <span class="tag do">DO — actions / prompts</span>
+    <span class="tag warn">⚠ watch-for</span>
+  </div>
+  <p class="note"><b>How to use:</b> Tap a card to open it. Hit <b>▶ Start</b> when you open the seminar — the clock tracks your pacing and shows which segment you should be in. The two never-cut moments: the <b>memory proof</b> (Demo 1) and the <b>full pitch</b>. When behind, cut <b>Demo 3</b> first. Never debug on stage &gt;30s — cut to a recording.</p>
+
+  <!-- ================= OPENCLAW OPS ================= -->
+  <div class="sectionhead">⚙️ OpenClaw — Commands (run in Ubuntu / WSL)</div>
+  <details class="seg" id="ops" open>
+    <summary><span class="tbadge">OPS</span><span class="stitle">Start · Restart · Reset · New session<span class="sub">Everything to control OpenClaw during the day</span></span><span class="chev">▶</span></summary>
+    <div class="body opsgrid">
+      <h3>✅ Start / verify <span class="pill">do this first</span></h3>
+      <div class="cmd"><span class="c">openclaw status</span>            # gateway should say “reachable”</div>
+      <div class="cmd"><span class="c">openclaw</span>                   # start it (opens the agent) if it’s down</div>
+      <p class="note">If it won’t come up cleanly: <code>openclaw doctor --fix</code></p>
+
+      <h3>🔄 Restart the gateway <span class="pill">after any config change</span></h3>
+      <div class="cmd"><span class="c">openclaw gateway run --force</span>   # start &amp; replace anything on its port</div>
+      <p class="note">Example config change then restart:</p>
+      <div class="cmd"><span class="c">openclaw config set gateway.auth.mode token</span>
+<span class="c">openclaw gateway run --force</span></div>
+
+      <h3>🆕 Fresh session / clean-slate agent <span class="pill">for a clean demo</span></h3>
+      <p class="note"><b>Best:</b> a new isolated agent that knows nothing — keeps your provider + Telegram. Memory has no “wipe” command, so use a new agent.</p>
+      <div class="cmd"><span class="c">openclaw agents add</span>                # create a fresh agent — name it: demo
+<span class="c">openclaw agents bind --help</span>         # see how to route Telegram → demo
+<span class="c">openclaw agents list</span>               # confirm
+<span class="c">openclaw status</span></div>
+      <p class="note"><b>Quick fresh conversation</b> (same agent, new thread — may still recall memory):</p>
+      <div class="cmd"><span class="c">openclaw agent --session-key agent:main:demo-live --message "Hello — fresh session?" --deliver --reply-channel telegram</span></div>
+      <p class="note">See stored sessions / reindex memory:</p>
+      <div class="cmd"><span class="c">openclaw sessions list</span>
+<span class="c">openclaw memory index --force</span></div>
+
+      <h3>↩️ Restore after the seminar</h3>
+      <div class="cmd"><span class="c">openclaw agents bind --agent main --channel telegram</span>   # point the bot back
+<span class="c">openclaw agents delete demo</span>                          # or remove the demo agent</div>
+
+      <h3>🧯 Reset <span class="pill red">destructive — avoid on stage</span></h3>
+      <div class="cmd"><span class="c">openclaw reset</span>       # wipes config/state (provider key, channels) — you’d re-onboard</div>
+      <div class="cmd"><span class="c">openclaw uninstall</span>   # removes gateway + local data (CLI stays)</div>
+      <p class="note">⚠ Only if truly broken. First try <code>openclaw doctor --fix</code>. Back up first: <code>cp -r ~/.openclaw ~/openclaw-backup</code></p>
+
+      <div class="block warn"><span class="lab">⚠ Live tips</span>
+        <ul>
+          <li>Everything runs in <b>Ubuntu/WSL</b>, not Windows PowerShell. Node 24.</li>
+          <li>WSL has no systemd → OpenClaw won’t auto-restart after a reboot. If the bot goes quiet, run <code>openclaw</code>.</li>
+          <li>Have Telegram already open and the bot warmed up before doors.</li>
+        </ul>
+      </div>
+    </div>
+  </details>
+
+  <!-- ================= PRE-FLIGHT ================= -->
+  <div class="sectionhead">🧰 Pre-flight (1 hour before doors)</div>
+  <details class="seg" id="preflight">
+    <summary><span class="tbadge">−60</span><span class="stitle">Pre-flight checklist<span class="sub">Test end-to-end, ready the fallbacks</span></span><span class="chev">▶</span></summary>
+    <div class="body">
+      <ul class="check">
+        <li><code>openclaw status</code> → gateway reachable; send a test message on Telegram and get a reply.</li>
+        <li>Model provider API key <b>funded</b> (has credit). Run one live generation to confirm.</li>
+        <li>Telegram mirrored to the projector cleanly (both chat + screen visible).</li>
+        <li>Brand brief for Brew &amp; Bloom ready to paste; TaskNest brief ready for the 2nd-brand beat.</li>
+        <li>2–3 pre-generated on-brand café images ready (image-gen is the least reliable live).</li>
+        <li><b>Recordings of all demos</b> saved locally — cold open, brand brain, image, cron/WhatsApp.</li>
+        <li>Meta Business Suite / Buffer open in a tab (screenshots ok — don’t risk a live login on stream).</li>
+        <li>Slides/deck open &amp; the offer (OPENCLAW72) slide loads; QR codes scan.</li>
+        <li>Second provider profile ready as a live failover; hotspot as Wi-Fi backup.</li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- ================= RUN OF SHOW ================= -->
+  <div class="sectionhead">🗺️ Run of show</div>
+  <div id="segs"></div>
+
+  <!-- ================= PROMPTS APPENDIX ================= -->
+  <div class="sectionhead">📋 All demo prompts (copy)</div>
+  <details class="seg" id="prompts">
+    <summary><span class="tbadge">📋</span><span class="stitle">Prompt appendix<span class="sub">Every prompt in order — tap Copy</span></span><span class="chev">▶</span></summary>
+    <div class="body" id="promptlist"></div>
+  </details>
+
+  <!-- ================= FAILURE RECOVERY ================= -->
+  <div class="sectionhead">🧯 Failure recovery</div>
+  <details class="seg" id="recovery">
+    <summary><span class="tbadge">🧯</span><span class="stitle">When (not if) something breaks<span class="sub">30-second rule: cut to a recording</span></span><span class="chev">▶</span></summary>
+    <div class="body">
+      <table class="rec">
+        <tr><td>OpenClaw won’t respond live</td><td>Cut to the pre-recorded demo clip. Narrate over it as if live. Never debug &gt;30s.</td></tr>
+        <tr><td>Model error / rate limit</td><td>Switch to the second provider profile. Or go to recording.</td></tr>
+        <tr><td>Image gen fails / off-brand</td><td>“Here’s one it made earlier” → drop a pre-generated image. The <i>prompt</i> is the teachable bit.</td></tr>
+        <tr><td>Cron / WhatsApp delivery misbehaves</td><td>Play the recorded clip of the message arriving. Most fragile demo — don’t fix live.</td></tr>
+        <tr><td>Wi-Fi dies during hands-on</td><td>Pivot to “watch me, build it tonight from the kit.” Don’t lose the room troubleshooting.</td></tr>
+        <tr><td>Skeptic: “Instagram will ban this”</td><td>Agree, then reframe: “Exactly why we generate + human-post. You just learned the pro way.”</td></tr>
+        <tr><td>Running long</td><td>Cut <b>Demo 3</b> to the dry-run only. Never cut the memory proof or the pitch.</td></tr>
+      </table>
+    </div>
+  </details>
+
+  <!-- ================= OFFER / CONTACTS ================= -->
+  <div class="sectionhead">🎯 The offer &amp; contacts</div>
+  <div class="big-offer">
+    <div style="font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--yellow);font-weight:800">Attendees-only · 72 hours</div>
+    <div class="code">OPENCLAW72</div>
+    <div style="font-size:14px;color:#cfe0ff">Agentic AI Developer Program · 24 weeks, in-person · Kochi<br>Say the code twice · spell it · leave the QR up through Q&amp;A</div>
+    <div class="contact"><b>Enroll:</b> hello@norlabs.ai · +91 95679 16999<br><b>Done-for-you:</b> Fahad · +91 94950 30000</div>
+  </div>
+
+  <footer>Build Your AI Marketing Intern · Norlabs.ai · instructor reference</footer>
+</main>
+
+<button class="backtop" onclick="scrollTo({top:0,behavior:'smooth'})" aria-label="Top">↑</button>
+
+<script>
+/* ---------- data ---------- */
+const SEGMENTS=[
+ {id:"s0",t:"0:00",tm:0,title:"Cold open",sub:"Slides 1 · phone in hand, before hello",goal:"Earn attention in 120 seconds — walk on texting the agent.",
+  rows:[
+   {k:"say",l:"Say (before any welcome)",h:"“Don’t worry who I am yet — watch my phone. I’m texting an assistant that lives on my laptop. It can browse, write, remember, and work while I sleep. Watch.”"},
+   {k:"do",l:"Do — text the agent (mirrored)",prompt:"Give me 3 Instagram caption ideas for a cozy café called Brew & Bloom — warm, playful, a little witty. Pick your favourite and tell me why."},
+   {k:"say",l:"Say (while it thinks)",h:"“Everyone here has used ChatGPT in a tab — ask, answer, copy, paste, repeat tomorrow. That’s <b>using</b> AI. What just started is different — one text and it’s <i>doing the work</i>, a week of content an agency would bill for. That’s <b>building</b> with AI — measured in time and money saved.”"},
+   {k:"say",l:"Say (after reading the reply)",h:"“Okay — <i>now</i> I’ll tell you who I am. Because by the end of today, you’ll have built one of these yourself.”"},
+   {k:"warn",l:"Watch",h:"Pre-warm the model backstage. If it’s slow/errors — <b>do not debug</b>. “Here’s one I ran earlier” → play the recording. Keep the phone in shot."}
+  ]},
+ {id:"s1",t:"0:02",tm:2,title:"Hook + reframe",sub:"Slides 1–6 · the lens for the whole day",goal:"Turn the shock into a clear reframe + a reason to stay 3 hours.",
+  rows:[
+   {k:"say",l:"Say — welcome + promise",h:"“I’m Fahad — co-founder & CTO of Soft Served Web, Chief Software Architect at Dialgen.ai, Gemini AI Hackathon winner. Hosted by Norlabs.ai, free, 3 hours, one break. By the time you leave you’ll have built — on your laptop — an AI marketing intern: knows the brand voice, plans a week of Instagram, writes captions, briefs images, drafts tomorrow’s post overnight. The café is just the demo — same build fits a startup or a consultant.”"},
+   {k:"say",l:"Say — the honesty rule (up front)",h:"“We are <b>not</b> making a bot that posts to Instagram by itself. Instagram bans bots; the tool has no IG button; and letting AI post unchecked is how brands embarrass themselves. Our model all day: <b>AI generates, a human reviews and posts.</b> That’s the professional version.”"},
+   {k:"say",l:"Say — CALLBACK #1 (the thesis)",h:"“Almost everyone can <i>use</i> ChatGPT — table stakes, no edge. The edge goes to people who <b>build</b> — wire AI into a system that runs. <b>Anyone can use AI. The advantage goes to those who build with it.</b> Founder → an owned capability &amp; moat. Professional → future-proof your career. Student → become the person companies hire.”"},
+   {k:"do",l:"Do — show",h:"Slide: Using vs Building two-column. Slide: today’s timeline (show the break + hands-on)."},
+   {k:"trans",l:"Transition",h:"“So what did I text? Not a chatbot — an <i>agent</i>. Next 25 minutes: what that word actually means.”"},
+   {k:"warn",l:"Watch",h:"Don’t demo more here — this is framing, not features. Ask “who’s written one line of code?” to relax the non-technical majority."}
+  ]},
+ {id:"s2",t:"0:20",tm:20,title:"What is agentic AI",sub:"Slides 7–16 · agent · tool · memory · autonomy",goal:"Give a mental model they can repeat to a friend tonight.",
+  rows:[
+   {k:"say",l:"Say — Agent",h:"“A chatbot is a vending machine — question in, answer out, no hands. An <b>agent</b> is an intern: give it a goal, it figures out the steps and comes back with the work <i>done</i>. It takes actions, not just text.”"},
+   {k:"say",l:"Say — Tool",h:"“A <b>tool</b> is anything the agent can reach — browser, files, sending a WhatsApp. The model is the brain (decides &amp; talks); tools are how it touches the real world. Brain + tools = an intern that gets things done.”"},
+   {k:"say",l:"Say — Memory",h:"“<b>Memory</b> turns a talker into a colleague. A tab forgets you on close. An agent remembers: teach it the brand once, it just <i>knows</i> — tomorrow, next week. We’ll prove this live — that ‘wait, it remembered’ moment is when people get it.”"},
+   {k:"say",l:"Say — Autonomy",h:"“<b>Autonomy</b> = how much it does without you there. High autonomy: a standing order — ‘every morning, draft tomorrow’s post.’ That timer is a <b>cron job</b>: an alarm clock for tasks. You’ll see one later.”"},
+   {k:"say",l:"Say — CALLBACK #2",h:"“Vending machine vs intern = <b>using vs building</b>. Anyone can poke the machine; the advantage is building the intern — hands, memory, a schedule.”"},
+   {k:"do",l:"Do — map onto OpenClaw",h:"Table: Agent = the assistant · Tool = browser/shell/20+ integrations · Memory = remembers your brand · Autonomy = cron jobs. Simple architecture slide: You → chat app → OpenClaw on your laptop → tools; brain = model API key; clock = cron. Optional live line: <code>What can you do?</code>"},
+   {k:"trans",l:"Transition",h:"“Enough theory — let’s build the brand brain. Watch me teach it a café once and never repeat myself.”"},
+   {k:"warn",l:"Watch",h:"“Is this just ChatGPT?” → “ChatGPT is the brain; OpenClaw gives it hands, memory, a schedule, on your machine.” If behind, cut the live ‘What can you do?’ — keep the mapping table. Hit 0:45 on the transition."}
+  ]},
+ {id:"s3",t:"0:45",tm:45,title:"DEMO 1 · Brand Brain",sub:"Slides 17–22 · brief → memory proof → calendar → 2nd brand",goal:"Turn ‘it’s an agent’ into ‘oh — it actually knows my brand.’",
+  rows:[
+   {k:"say",l:"Say — meet the client",h:"“Meet Brew &amp; Bloom — a cozy independent café. Stand-in for any local business here: swap café for your shop, clinic, studio. Give the agent the brief once, store it, and it speaks Brew &amp; Bloom natively.”"},
+   {k:"do",l:"Do — Step 1: teach the brand",prompt:"Remember this as our brand brief and use it for everything from now on.\n\nBrand: Brew & Bloom — a cozy independent café.\nVoice: warm, playful, witty. Never corporate, never salesy. Talks like a friendly regular, not a billboard.\nAudience: students and young professionals, 18–30, who love aesthetic coffee spots and study-friendly vibes.\nWhat we sell: specialty coffee, fresh pastries, a calm place to study or hang out.\nDo: emojis in moderation, light humour, references to studying, cozy weather, latte art, plants.\nDon't: corporate jargon, ALL CAPS hype, fake urgency, discount-spam energy.\n\nConfirm you've saved this and give it back to me in one short sentence so I know you understood."},
+   {k:"say",l:"Say",h:"“It’s not just acknowledging — it’s saving to memory <i>and</i> playing it back in its own words. It understood the assignment.”"},
+   {k:"do",l:"Do — Step 2: PROVE MEMORY ⭐ (never cut)",prompt:"Write one Instagram caption for a rainy Tuesday."},
+   {k:"say",l:"Say — the ‘it remembered’ moment",h:"“I said nothing about Brew &amp; Bloom — no voice, no audience, no café. A tab would’ve given a generic rainy-day caption. This knew it was Brew &amp; Bloom, knew rain = cozy-study energy, knew the audience — because it <b>remembered</b>. Taught once, persists forever. <b>That’s</b> an intern, not a vending machine.”"},
+   {k:"say",l:"Say — CALLBACK #3",h:"“That’s the whole seminar in one screen. Using: re-paste your brand every time. Building: teach once, it just knows. <b>Anyone can use AI. The advantage goes to those who build with it.</b>”"},
+   {k:"do",l:"Do — Step 3: the 7-day calendar",prompt:"Plan a 7-day Instagram content calendar for Brew & Bloom, Monday to Sunday.\n\nFor each day give me:\n- Day + a content theme (mix it up: behind-the-scenes, a menu item, a study vibe, user-generated-content prompt, a small promo, a community/local angle, a weekend mood)\n- A short caption in our brand voice\n- 3–5 relevant hashtags\n- A one-line idea for the photo or video\n\nKeep it varied across the week, and keep every caption sounding like us."},
+   {k:"say",l:"Say — the ROI beat (while calendar is up)",h:"“An agency charges <b>₹60,000–₹1,50,000</b> for a <i>month</i> of content. This did a week, on brand, in ~4 minutes. Founders: that’s the moat — the engine lives inside your business, not on an agency invoice. Notice it repurposes one idea across angles and holds brand voice at scale.”"},
+   {k:"do",l:"Do — Step 4: 2nd brand in 30s (TaskNest)",prompt:"Now remember a SECOND brand brief alongside the café, and keep them separate.\n\nBrand: TaskNest — a productivity / project-management app for small teams.\nVoice: smart, friendly, a little bold. Confident without being corporate.\nAudience: startup founders and busy teams, 25–40, juggling too many tools.\nWhat we sell: a simple, fast project-management app that small teams actually stick with.\nPosts: productivity tips, feature highlights, founder lessons, behind-the-build moments.\nDo: practical tips, a confident point of view, light wit, founder-to-founder honesty.\nDon't: corporate buzzwords, fake hustle-culture hype, jargon salad.\n\nConfirm you've saved TaskNest, then write me one Instagram caption announcing a new feature — in TaskNest's voice, not the café's."},
+   {k:"say",l:"Say",h:"“30 seconds, no café flavour bleeding in. <b>Founders, that’s you.</b> Same works for a consultant’s personal brand (Maya Rao) — <b>professionals, that’s you.</b> Same agent, any brand.”"},
+   {k:"trans",l:"Transition",h:"“Ideas aren’t a post. After the break we turn one day into a real, ready-to-post asset — and I show where the human stays in charge.”"},
+   {k:"warn",l:"Watch",h:"Bland output = thin brief; add a vivid line, re-run one day (teaches prompt quality). If asked ‘post it now?’ → “No — after the break I’ll show why that’s right.” Memory proof is the emotional peak — <b>never cut it</b>."}
+  ]},
+ {id:"br",t:"1:15",tm:75,title:"BREAK (15 min)",sub:"Slide 23 · reset energy",goal:"Soft-sell by being useful. Do NOT debug during the break — pre-warm quietly.",
+  rows:[
+   {k:"say",l:"Say (right before)",h:"“15-minute break. When we come back, we make a real post — caption and image — and I’ll show where pros keep a human in the loop. Livestream: drop your questions, I’ll pick some up after.”"},
+   {k:"do",l:"Do — during break",h:"Leave a holding slide: OPENCLAW72 teaser + the install command so eager folks pre-start. Float the room (warm leads self-identify). Queue 2–3 livestream questions. Quietly confirm Demo 2 &amp; 3 are pre-warmed and the key has credit."}
+  ]},
+ {id:"s4",t:"1:30",tm:90,title:"DEMO 2 · Caption → Image → LinkedIn",sub:"Slides 24–28 · the pipeline + human review",goal:"Full pipeline; make human-in-the-loop feel like the pro move.",
+  rows:[
+   {k:"say",l:"Say — re-open + order of ops",h:"“[Answer 1–2 livestream Qs.] We have a week of ideas — let’s turn <i>one</i> day into a finished post. Order a real social team uses: pick idea → final caption → brief &amp; generate image → <b>human reviews</b> → human schedules. Step four always. Here’s why.”"},
+   {k:"say",l:"Say — the honesty payoff (trust moment)",h:"“One: OpenClaw has no IG button, by design. Two: Instagram bans browser bots — you risk the account. Three: even if you could, you shouldn’t — AI is occasionally confidently wrong; one bad automated post is expensive, a 10-second human approve is nothing. The pro pattern agencies use: <b>AI generates, human approves, human posts.</b> Say that in an interview and watch the room change.”"},
+   {k:"do",l:"Do — Step 1: finalize the caption",prompt:"Take Day 2 from our calendar. Write the final, post-ready caption for it in our brand voice.\nGive me: the caption, a strong first line that works as a hook, 5–8 hashtags, and a suggested call-to-action (like a question to drive comments)."},
+   {k:"do",l:"Do — Step 2: brief the image",prompt:"For that same Day 2 post, write a detailed image prompt I can give to an image generator.\nDescribe the scene, the mood, the lighting, the colours, and the composition so it matches Brew & Bloom's cozy aesthetic. Keep it photo-realistic, not cartoonish."},
+   {k:"say",l:"Say — Step 3: human review checkpoint",h:"“This is the checkpoint. I’m the editor: caption on-brand? typos? right CTA? Image looks like us? anyone’s face without permission? weird background? Ten seconds. AI did 90% of the labour; I did the 10% of judgement that protects the brand.”"},
+   {k:"do",l:"Do — (optional) model a human edit",prompt:"Swap the last hashtag for something more local, and soften the CTA so it sounds less like an ad."},
+   {k:"do",l:"Do — Step 3b: repurpose for LinkedIn (~2–3 min)",prompt:"Repurpose that same Day 2 post for LinkedIn instead of Instagram.\nKeep the same idea and brand voice, but rewrite it for LinkedIn: a longer, more professional tone, a strong opening line, 2–3 short paragraphs, an insight or takeaway, and a question at the end to start a conversation. No hashtag spam — at most 2–3 relevant ones."},
+   {k:"say",l:"Say — LinkedIn point",h:"“Same idea, different register — earns a comment on LinkedIn, not a scroll-by. One idea, many channels. <b>Founders, your channel might be LinkedIn — same agent, same memory, different platform.</b>”"},
+   {k:"say",l:"Say — Step 4: how a human schedules",h:"“We do NOT automate posting. A human schedules the approved caption + image via <b>Meta Business Suite</b> (Instagram’s free scheduler) or Buffer — paste caption, upload image, pick time, schedule. Official path, brand safe.” (Show screenshots — don’t risk a live login.)"},
+   {k:"trans",l:"Transition",h:"“I’m still doing the work. The magic is when it runs <i>without</i> me. Next: a cron job — every morning, draft tomorrow’s post and message it to approve.”"},
+   {k:"warn",l:"Watch",h:"Biggest over-promise risk — say “generate/draft/ready-to-post”, never “auto-post”. Image gen is fragile: pre-generate a clean café image; never coax an image &gt;30s. Anchor on Meta Business Suite (free)."}
+  ]},
+ {id:"s5",t:"2:05",tm:125,title:"DEMO 3 · Autopilot",sub:"Slides 29–31 · cron → WhatsApp draft",goal:"‘Works while you sleep’ — with the human still in control.",
+  rows:[
+   {k:"say",l:"Say",h:"“Here it stops feeling like a tool and starts feeling like an employee. Standing order: every evening at 8pm, draft tomorrow’s post and WhatsApp it to me to approve over breakfast. It runs the night shift; I do the 10-second sign-off. Autonomy, with a seatbelt.”"},
+   {k:"do",l:"Do — create the cron job",prompt:"Set up a daily scheduled task.\n\nEvery day at 20:00, do the following automatically:\n1. Look at our Brew & Bloom 7-day content plan and pick tomorrow's day.\n2. Draft tomorrow's Instagram post: the final caption in our brand voice, hashtags, a CTA, and a detailed image prompt.\n3. Send it to me on WhatsApp as a tidy draft, ending with: \"Reply APPROVE to keep it, or tell me what to change.\"\n\nConfirm the schedule is set and tell me in plain English what you'll do and when."},
+   {k:"do",l:"Do — DRY RUN (prove it now) ⭐",prompt:"Don't wait until 8pm — run that task once right now as a test, and send me the WhatsApp draft so we can see exactly what tomorrow morning will look like."},
+   {k:"say",l:"Say (message arrives)",h:"“There’s the message I’d wake up to — caption, hashtags, image brief, ‘approve or change.’ I reply APPROVE, or ‘make it funnier’, and <i>then</i> a human schedules. The intern worked the night shift; I did QC with my coffee.”"},
+   {k:"say",l:"Say — CALLBACK (pre-pitch)",h:"“In 2.5 hours we built an intern that knows a brand, plans a week, art-directs images, repurposes channels, and clocks in nightly on its own. <b>Anyone can use AI. The advantage goes to those who build it.</b>”"},
+   {k:"trans",l:"Transition",h:"“Now it’s your turn — 20 minutes: install, connect your chat app, paste the brief. Laptops open.”"},
+   {k:"warn",l:"Watch",h:"⭐ <b>CUT-FOR-TIME segment.</b> If past 2:10, run ONLY the dry-run — skip the recurring schedule + reply loop. If cron/WhatsApp misbehaves, play the recording — most fragile demo. “Laptop on at 8pm?” → “For local, yes; the program covers always-on.” (clean bridge to the program). Say once more: it drafts, doesn’t post."}
+  ]},
+ {id:"s6",t:"2:30",tm:150,title:"Hands-on",sub:"Slides 32–34 · they build it",goal:"Convert ‘I watched it’ into ‘I did it’ — strongest pre-pitch state.",
+  rows:[
+   {k:"say",l:"Say",h:"“20 minutes, 3 steps, you walk out with this on your machine. Don’t worry about finishing perfectly. Helpers are circulating; livestream, follow along and drop blockers.”"},
+   {k:"do",l:"Do — Step 1: install (keep on screen)",prompt:"npm install -g openclaw@latest\nopenclaw onboard --install-daemon"},
+   {k:"do",l:"Do — Step 2",h:"During onboarding: connect Telegram/WhatsApp; add a model API key with a little credit (that’s the brain). Node 24 recommended (22.19+ ok)."},
+   {k:"do",l:"Do — Step 3: paste the brief",prompt:"Remember this as our brand brief and use it for everything from now on.\n\nBrand: Brew & Bloom — a cozy independent café.\nVoice: warm, playful, witty. Never corporate, never salesy.\nAudience: students and young professionals, 18–30, who love aesthetic coffee spots and study-friendly vibes.\nWhat we sell: specialty coffee, fresh pastries, a calm place to study or hang out.\nDo: light humour, emojis in moderation, references to studying, cozy weather, latte art, plants.\nDon't: corporate jargon, ALL CAPS hype, fake urgency, discount spam.\n\nConfirm you've saved this, then write me one test caption for a sunny Saturday."},
+   {k:"say",l:"Say — define ‘done’",h:"“<b>Done for today = you texted your agent and got one Brew &amp; Bloom caption back.</b> When that comes back sounding like a cozy café — congratulations, you built the brain.”"},
+   {k:"trans",l:"Transition",h:"“Hands off keyboards, eyes up. Whether you finished or not — you’ve seen how close this is. Let me show what happens when you build the things companies pay for.”"},
+   {k:"warn",l:"Watch",h:"Blockers: old Node/npm → confirm Node 24, pair with a neighbour. No API key → pair to watch a neighbour. Chat app won’t connect → talk to the agent locally for the test. Celebrate first wins out loud. <b>Hard-stop at 2:48</b> — unfinished is fine."}
+  ]},
+ {id:"s7",t:"2:50",tm:170,title:"THE PITCH + CTA",sub:"Slides 35–36 · Used vs Built → Program",goal:"Convert to the Agentic AI Developer Program. Protect the full 10 min.",
+  rows:[
+   {k:"say",l:"Say — the payoff",h:"“In under 3 hours you took AI from a vending machine to an intern — knows a brand, plans a week, art-directs, repurposes IG + LinkedIn, reviews with a human, clocks in nightly. You didn’t just <i>use</i> AI. You <b>built</b> something. <b>Anyone can use AI. The advantage goes to those who build with it.</b>”"},
+   {k:"say",l:"Say — pick your reason",h:"“<b>Founder/owner:</b> build a capability you own — stop renting your marketing; a real moat. <b>Professional:</b> future-proof your skills — automate the work instead of being automated. <b>Student:</b> become the person companies hire — someone who can build. Three reasons, one program.”"},
+   {k:"say",l:"Say — the program (Week 15 proof)",h:"“Today’s café intern is the shallow end. Production agents — reliable without your laptop awake, real business logic, client-ready — take more than an afternoon. That’s the <b>Agentic AI Developer Program</b>: 20+ weeks. The OpenClaw build we did today? In the program it’s literally <b>Week 15</b> — one case study. You saw Week 15 on day one.”"},
+   {k:"say",l:"Say — the offer",h:"“Because you showed up and built something, use code <b>OPENCLAW72</b> for an attendees-only price — only for this room + livestream, expires in <b>72 hours</b>. And if you’d rather we set it up and run it for you — talk to us at the end. We do that too.”"},
+   {k:"do",l:"Do",h:"Offer slide + QR stays up. Say the code twice, spell it. “Scan now or write down OPENCLAW72 — the clock’s running.”"},
+   {k:"warn",l:"Watch",h:"Don’t rush the close to fill an install gap — cut hands-on at 2:48, not the pitch. Stay for the room after “go” — warm leads approach. Confident &amp; warm, not desperate."}
+  ]},
+ {id:"s8",t:"2:56",tm:176,title:"Brand & Close",sub:"Slides 37–39 · Why Norlabs · Team · Come build it",goal:"Establish the brand; end on the invitation. Slide 39 stays up through Q&A.",
+  rows:[
+   {k:"say",l:"Say — Why Norlabs.ai (slide 37)",h:"“Norlabs.ai is the AI Institute of NorPathway — 24 weeks, in-person, Kochi. From prompt to production. Taught by people who run real AI companies. Outcome-driven — real portfolio + recruiter connections into ₹8–80+ LPA roles.”"},
+   {k:"say",l:"Say — The team (slide 38)",h:"“Backed by operators: Soft Served Web (AI product/web), Dialgen.ai (AI voice agents), Ahoy Consulting (global study/careers, Czech Republic). AI expertise + global opportunity: learn to build AI <i>and</i> get a pathway to global careers.”"},
+   {k:"say",l:"Say — Come build it (slide 39)",h:"“The future belongs to builders. Come build it. OPENCLAW72 · enroll hello@norlabs.ai · follow @norlabs.ai. Thank you for spending your afternoon with Norlabs.ai — go finish that café intern tonight, and I’ll see you in the program.”"},
+   {k:"do",l:"Do",h:"Leave slide 39 up (logo, OPENCLAW72, social QRs) through all of Q&A and as the room empties."}
+  ]}
+];
+
+/* ---------- render ---------- */
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+const segWrap=document.getElementById('segs'), plist=document.getElementById('promptlist'), toc=document.getElementById('toc');
+let promptN=0, allPrompts=[];
+const staticToc=[["#ops","OPS","OpenClaw commands"],["#preflight","−60","Pre-flight"]];
+let tocHTML=staticToc.map(x=>`<a href="${x[0]}"><span class="tt">${x[1]}</span>${x[2]}</a>`).join("");
+
+SEGMENTS.forEach(seg=>{
+  let rows="";
+  seg.rows.forEach(r=>{
+    if(r.k==="trans"){rows+=`<div class="trans">➜ ${r.h}</div>`;return}
+    let inner="";
+    if(r.h) inner+=`<p>${r.h}</p>`;
+    if(r.prompt){promptN++;const pid="p"+promptN;allPrompts.push({n:promptN,seg:seg.title,text:r.prompt});
+      inner+=`<div class="prompt"><button class="copy" data-t="${esc(r.prompt)}">Copy</button><pre>${esc(r.prompt)}</pre></div>`;}
+    rows+=`<div class="block ${r.k}"><span class="lab">${r.l}</span>${inner}</div>`;
+  });
+  const el=document.createElement('details');el.className='seg';el.id=seg.id;el.dataset.tm=seg.tm;
+  el.innerHTML=`<summary><span class="tbadge">${seg.t}</span><span class="stitle">${seg.title}<span class="sub">${seg.sub}</span></span><span class="chev">▶</span></summary>
+    <div class="body"><div class="goal">🎯 ${seg.goal}</div>${rows}</div>`;
+  segWrap.appendChild(el);
+  tocHTML+=`<a href="#${seg.id}" data-tm="${seg.tm}"><span class="tt">${seg.t}</span>${seg.title}</a>`;
+});
+tocHTML+=`<a href="#prompts"><span class="tt">📋</span>All prompts</a><a href="#recovery"><span class="tt">🧯</span>Failure recovery</a>`;
+toc.innerHTML=tocHTML;
+
+/* prompt appendix */
+plist.innerHTML=allPrompts.map(p=>`<div class="ptip"><b>${p.n}. ${esc(p.seg)}</b></div><div class="prompt"><button class="copy" data-t="${esc(p.text)}">Copy</button><pre>${esc(p.text)}</pre></div>`).join("");
+
+/* copy buttons */
+document.addEventListener('click',e=>{
+  const b=e.target.closest('.copy'); if(!b)return;
+  const t=b.getAttribute('data-t');
+  navigator.clipboard?.writeText(t).then(()=>{b.textContent="Copied ✓";b.classList.add('done');setTimeout(()=>{b.textContent="Copy";b.classList.remove('done')},1400)});
+});
+
+/* jump menu */
+document.getElementById('jumpBtn').onclick=()=>toc.classList.toggle('open');
+toc.addEventListener('click',e=>{ if(e.target.closest('a')){toc.classList.remove('open');
+  const id=e.target.closest('a').getAttribute('href'); const d=document.querySelector(id); if(d&&d.tagName==='DETAILS')d.open=true;}});
+
+/* live pacing clock */
+const SCHED=[[0,"Cold open + Hook"],[20,"What is agentic AI"],[45,"Demo 1 · Brand Brain"],[75,"BREAK"],[90,"Demo 2 · Content+LinkedIn"],[125,"Demo 3 · Autopilot"],[150,"Hands-on"],[170,"Pitch + CTA"],[176,"Brand & Close / Q&A"],[181,"— end —"]];
+let startMs=null,timer=null;
+const clockEl=document.getElementById('clock'),nowEl=document.getElementById('nowseg'),btn=document.getElementById('startBtn');
+function fmt(s){const m=Math.floor(s/60);return m+":"+String(s%60).padStart(2,'0')}
+function tick(){
+  const sec=Math.floor((Date.now()-startMs)/1000), min=sec/60;
+  clockEl.textContent=fmt(sec);
+  let i=0; for(let k=0;k<SCHED.length;k++){if(min>=SCHED[k][0])i=k;}
+  const cur=SCHED[i], nxt=SCHED[i+1]||["","done"];
+  const planned=cur[0], drift=Math.round(min-planned);
+  let pace="",cls="ok";
+  if(nxt[0]&&min>nxt[0]){pace=`+${Math.round(min-nxt[0])}m over`;cls="behind";}
+  else if(nxt[0]){const left=Math.round(nxt[0]-min);pace=`${left}m left`;cls=left<=2?"behind":"ok";}
+  nowEl.innerHTML=`Now: <b>${cur[1]}</b> · next ${nxt[1]}${nxt[0]?` @ ${Math.floor(nxt[0]/60)}:${String(nxt[0]%60).padStart(2,'0')}`:''} · <span class="pace ${cls}">${pace}</span>`;
+  // highlight current seg in TOC
+  document.querySelectorAll('#toc a[data-tm]').forEach(a=>{a.classList.toggle('now', +a.dataset.tm===cur[0]);});
+}
+btn.onclick=()=>{
+  if(timer){clearInterval(timer);timer=null;startMs=null;btn.textContent="▶ Start";clockEl.textContent="0:00";nowEl.textContent="Stopped · press Start to resume";return;}
+  startMs=Date.now();btn.textContent="■ Stop";tick();timer=setInterval(tick,1000);
+};
+</script>
+</body>
+</html>
